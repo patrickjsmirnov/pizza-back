@@ -16,9 +16,11 @@ app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 const pizzasRouter = require('./components/pizzas/pizzaController');
 const ordersRouter = require('./components/orders/orderController')
+const usersRouter = require('./components/users/userController')
 
 app.use('/pizzas', pizzasRouter)
 app.use('/orders', ordersRouter)
+app.use('/users', usersRouter)
 
 app.get('*', (req, res) => {
   res.sendFile('index.html', {root: path.join(__dirname, '../../public/')});

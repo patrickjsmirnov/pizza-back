@@ -1,20 +1,33 @@
 
 const express = require('express')
 const router = express.Router()
-// const pizzas = require('./pizzaModel')
+const orderModel = require('./orderModel')
 
-// будем принимать заказ и пока не сохранять просто слать заглушку
 router.post('/create', async (req, res) => {
 
-  console.log('req: ', req.body)
-  // const pizzasRows = await pizzas.getPizzas();
+  const { pizzas, email:  order_email, user_email, first_name, last_name, address } = req.body
+
+  const [{ order_id }] = await orderModel.create({
+    order_email,
+    user_email,
+    first_name,
+    last_name,
+    address
+  })
+
+  await orderModel.saveOrderPizza({pizzas, order_id})
 
   res.json('ok')
 })
-//
-// router.get('/:id', async (req, res) => {
-//   const pizzaRow = await pizzas.getPizzaById(req.params.id);
-//   res.json(...pizzaRow)
-// })
+
+router.post('/get-order-by-user', async (req, res) => {
+
+  const { email } = req.body
+
+  const response = await orderModel.getOrdersByUserEmail(email)
+
+  res.json(response)
+
+})
 
 module.exports = router
