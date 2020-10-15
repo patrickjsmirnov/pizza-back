@@ -15,7 +15,10 @@ app.use(cors());
 app.listen(port, () => console.log(`App listening on port ${port}!`))
 
 const pizzasRouter = require('./components/pizzas/pizzaController');
+const ordersRouter = require('./components/orders/orderController')
+
 app.use('/pizzas', pizzasRouter)
+app.use('/orders', ordersRouter)
 
 app.get('*', (req, res) => {
   res.sendFile('index.html', {root: path.join(__dirname, '../../public/')});
