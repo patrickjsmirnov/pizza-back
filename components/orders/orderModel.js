@@ -4,13 +4,13 @@ const { pool }= require('../../config/db')
 exports.create = async function ({
   order_email,
   user_email,
-  first_name,
-  last_name,
-  address
+  name,
+  address,
+  phone
 }) {
 
-  const query = 'INSERT INTO orders(first_name, last_name, address, order_email, user_email) VALUES($1, $2, $3, $4, $5) RETURNING order_id'
-  const values = [first_name, last_name, address, order_email, user_email]
+  const query = 'INSERT INTO orders(name, address, order_email, user_email, phone) VALUES($1, $2, $3, $4, $5) RETURNING order_id'
+  const values = [name, address, order_email, user_email, phone]
 
   try {
     const { rows } = await pool.query(query, values);
@@ -24,7 +24,6 @@ exports.create = async function ({
 exports.saveOrderPizza = async function ({ pizzas, order_id }) {
   const query = 'INSERT INTO order_pizzas(order_id, pizza_id, qty) VALUES($1, $2, $3) RETURNING *'
 
-  console.log('pizzas: ', pizzas)
   try {
     pizzas.forEach(async (pizza) => {
       await pool.query(query, [order_id, pizza.id, pizza.qty]);
@@ -37,17 +36,38 @@ exports.saveOrderPizza = async function ({ pizzas, order_id }) {
 };
 
 exports.getOrdersByUserEmail = async function (user_email) {
-  const query = 'SELECT * FROM orders JOIN order_pizzas ON orders.order_id = order_pizzas.order_id JOIN pizzas ON pizzas.id = pizza_id'
+  const query = `SELECT * FROM orders WHERE user_email = '${user_email}'`
+
+  const response = {
+    orders: [],
+    pizzasInOrder: {},
+    pizzas: {}
+  }
 
   try {
+    const orders = await pool.query(query);
+    response.orders = [...orders.rows]
 
-    // todo вытаскивать содержимое заказов
+    async function getPizzas(orders) {
+      const ordersId = orders.rows.map(order => order.order_id)
 
-    const { rows } = await pool.query(query);
+      for (const id of ordersId) {
+        const pizzasByOrderId = await pool.query(`SELECT pizza_id, qty FROM order_pizzas WHERE order_id = '${id}'`)
+        if (!response.pizzasInOrder[id]) {
+          response.pizzasInOrder[id] = [...pizzasByOrderId.rows]
+        }
+      }
 
-    console.log('rows: ', rows)
+      const allPizzas = await pool.query(`SELECT * FROM pizzas`)
 
-    return rows
+      allPizzas.rows.forEach(pizza => {
+        response.pizzas[pizza.id] = { ...pizza }
+      })
+    }
+
+    await getPizzas(orders)
+
+    return response
 
   } catch (e) {
     return e;
