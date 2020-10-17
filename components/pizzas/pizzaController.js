@@ -4,7 +4,6 @@ const router = express.Router()
 const pizzas = require('./pizzaModel')
 
 router.get('/', async (req, res) => {
-
   const pizzasRows = await pizzas.getPizzas();
 
   res.json(pizzasRows)
