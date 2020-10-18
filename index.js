@@ -6,14 +6,14 @@ const cors = require('cors');
 const https = require('https')
 const bodyParser = require('body-parser');
 const fs = require('fs');
-const port = 3010;
+const port = 3003;
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(cors());
 
 app.listen(port, function () {
-  console.log('Example app listening on port 3000! Go to https://localhost:3000/')
+  console.log('Example app listening on port 3003!')
 })
 
 const pizzasRouter = require('./components/pizzas/pizzaController');
