@@ -4,7 +4,7 @@ const router = express.Router();
 const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const port = 3003;
+const port = 3000;
 
 app.use(express.static('public'));
 app.use(bodyParser.json());
