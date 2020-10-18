@@ -6,11 +6,14 @@ exports.create = async function ({
   user_email,
   name,
   address,
-  phone
+  phone,
+  total,
+  comment,
+  currency
 }) {
 
-  const query = 'INSERT INTO orders(name, address, order_email, user_email, phone) VALUES($1, $2, $3, $4, $5) RETURNING order_id'
-  const values = [name, address, order_email, user_email, phone]
+  const query = 'INSERT INTO orders(name, address, order_email, user_email, phone, comment, total, currency) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING order_id'
+  const values = [name, address, order_email, user_email, phone, comment, total, currency]
 
   try {
     const { rows } = await pool.query(query, values);

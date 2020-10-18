@@ -5,15 +5,20 @@ const orderModel = require('./orderModel')
 
 router.post('/create', async (req, res) => {
 
-  const { pizzas, email:  order_email, user_email, name,  address, phone } = req.body
+  const { pizzas, email:  order_email, user_email, name,  address, phone, comment, total, currency } = req.body
 
   const [{ order_id }] = await orderModel.create({
     order_email,
     user_email,
     name,
     address,
-    phone
+    phone,
+    comment,
+    total,
+    currency
   })
+
+  console.log('order_id: ', order_id)
 
   await orderModel.saveOrderPizza({pizzas, order_id})
 
