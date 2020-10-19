@@ -4,17 +4,23 @@ const router = express.Router()
 const usersModel = require('./userModel')
 
 router.post('/save', async (req, res) => {
-
   const { name, email } = req.body
 
-  const result = await usersModel.saveUser({ name, email })
-
-  res.json(result)
+  try {
+    const result = await usersModel.saveUser({ name, email })
+    res.json(result)
+  } catch(e) {
+    return e
+  }
 })
 
 router.get('/:id', async (req, res) => {
-  const pizzaRow = await pizzas.getPizzaById(req.params.id);
-  res.json(...pizzaRow)
+  try {
+    const pizzaRow = await pizzas.getPizzaById(req.params.id);
+    res.json(...pizzaRow)
+  } catch(e) {
+    return e
+  }
 })
 
 module.exports = router

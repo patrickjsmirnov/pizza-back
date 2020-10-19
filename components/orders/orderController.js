@@ -4,34 +4,39 @@ const router = express.Router()
 const orderModel = require('./orderModel')
 
 router.post('/create', async (req, res) => {
-
   const { pizzas, email:  order_email, user_email, name,  address, phone, comment, total, currency } = req.body
 
-  const [{ order_id }] = await orderModel.create({
-    order_email,
-    user_email,
-    name,
-    address,
-    phone,
-    comment,
-    total,
-    currency
-  })
+  try {
+    const data = {
+      order_email,
+      user_email,
+      name,
+      address,
+      phone,
+      comment,
+      total,
+      currency
+    }
 
-  console.log('order_id: ', order_id)
+    const [{ order_id }] = await orderModel.create(data)
+    await orderModel.saveOrderPizza({pizzas, order_id})
 
-  await orderModel.saveOrderPizza({pizzas, order_id})
+    res.json(data)
+  } catch(e) {
+    return e
+  }
 
-  res.json('ok')
 })
 
 router.post('/get-order-by-user', async (req, res) => {
-
   const { email } = req.body
 
-  const response = await orderModel.getOrdersByUserEmail(email)
-
-  res.json(response)
+  try {
+    const response = await orderModel.getOrdersByUserEmail(email)
+    res.json(response)
+  } catch(e) {
+    return e
+  }
 
 })
 

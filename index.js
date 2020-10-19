@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.listen(port, function () {
-  console.log('Example app listening on port 3003!')
+  console.log('Example app listening on port 3000!')
 })
 
 const pizzasRouter = require('./components/pizzas/pizzaController');
